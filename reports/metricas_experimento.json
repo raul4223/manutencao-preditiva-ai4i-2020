@@ -1,0 +1,603 @@
+{
+  "dataset": {
+    "name": "AI4I 2020 Predictive Maintenance Dataset",
+    "source": "UCI Machine Learning Repository (ID 601) / Kaggle",
+    "author": "Stephan Matzka (2020)",
+    "split": {
+      "train_rows": 8000,
+      "test_rows": 2000,
+      "cv_folds": 5
+    }
+  },
+  "eda": {
+    "n_rows": 10000,
+    "n_cols_original": 14,
+    "missing_values_total": 0,
+    "duplicate_rows": 0,
+    "target_distribution": {
+      "normal_0": 9661,
+      "failure_1": 339,
+      "failure_rate_pct": 3.39
+    },
+    "type_distribution": {
+      "L": 6000,
+      "M": 2997,
+      "H": 1003
+    },
+    "failure_by_type_pct": {
+      "L": 3.92,
+      "M": 2.77,
+      "H": 2.09
+    },
+    "failure_submodes": {
+      "TWF": 46,
+      "HDF": 115,
+      "PWF": 95,
+      "OSF": 98,
+      "RNF": 19
+    },
+    "anomalies_documented": {
+      "rnf_1_with_machine_failure_0": 18,
+      "machine_failure_1_without_submode": 9
+    },
+    "dropped_leakage_and_id_columns": [
+      "UDI",
+      "Product ID",
+      "Machine failure",
+      "TWF",
+      "HDF",
+      "PWF",
+      "OSF",
+      "RNF"
+    ],
+    "descriptive_stats": {
+      "Air temperature [K]": {
+        "mean": 300.0049,
+        "std": 2.0003,
+        "min": 295.3,
+        "median": 300.1,
+        "max": 304.5
+      },
+      "Process temperature [K]": {
+        "mean": 310.0056,
+        "std": 1.4837,
+        "min": 305.7,
+        "median": 310.1,
+        "max": 313.8
+      },
+      "Rotational speed [rpm]": {
+        "mean": 1538.7761,
+        "std": 179.2841,
+        "min": 1168.0,
+        "median": 1503.0,
+        "max": 2886.0
+      },
+      "Torque [Nm]": {
+        "mean": 39.9869,
+        "std": 9.9689,
+        "min": 3.8,
+        "median": 40.1,
+        "max": 76.6
+      },
+      "Tool wear [min]": {
+        "mean": 107.951,
+        "std": 63.6541,
+        "min": 0.0,
+        "median": 108.0,
+        "max": 253.0
+      },
+      "Temp_Diff_K": {
+        "mean": 10.0006,
+        "std": 1.0011,
+        "min": 7.6,
+        "median": 9.8,
+        "max": 12.1
+      },
+      "Mechanical_Power_W": {
+        "mean": 6279.745,
+        "std": 1067.4183,
+        "min": 1148.4406,
+        "median": 6271.0273,
+        "max": 10469.923
+      },
+      "Wear_Torque_Nm_min": {
+        "mean": 4314.6646,
+        "std": 2826.5677,
+        "min": 0.0,
+        "median": 4012.95,
+        "max": 16497.0
+      },
+      "Torque_Speed_Ratio": {
+        "mean": 0.0269,
+        "std": 0.0088,
+        "min": 0.0013,
+        "median": 0.0267,
+        "max": 0.0638
+      }
+    }
+  },
+  "feature_engineering": {
+    "new_attributes": [
+      "Temp_Diff_K",
+      "Mechanical_Power_W",
+      "Wear_Torque_Nm_min",
+      "Torque_Speed_Ratio"
+    ],
+    "ablation_study": [
+      {
+        "regime": "1. Dados Brutos (Sem FE, Sem Redução)",
+        "regime_short": "Brutos\n(6 orig.)",
+        "use_engineered": false,
+        "reduction": "none",
+        "rf_cv_f1": 0.5946,
+        "gb_cv_f1": 0.709,
+        "hgb_cv_f1": 0.7375,
+        "rf_cv_pr_auc": 0.7638,
+        "gb_cv_pr_auc": 0.7839,
+        "hgb_cv_pr_auc": 0.8045
+      },
+      {
+        "regime": "2. FE + Sem Redução (12 atribs. codif.)",
+        "regime_short": "FE Completo\n(12 atribs.)",
+        "use_engineered": true,
+        "reduction": "none",
+        "rf_cv_f1": 0.8769,
+        "gb_cv_f1": 0.8902,
+        "hgb_cv_f1": 0.8518,
+        "rf_cv_pr_auc": 0.8926,
+        "gb_cv_pr_auc": 0.8902,
+        "hgb_cv_pr_auc": 0.8853
+      },
+      {
+        "regime": "3. FE + Rank ANOVA (k = 10 atribs.)",
+        "regime_short": "FE + Rank\nANOVA (k=10)",
+        "use_engineered": true,
+        "reduction": "anova_k10",
+        "rf_cv_f1": 0.8703,
+        "gb_cv_f1": 0.8874,
+        "hgb_cv_f1": 0.8599,
+        "rf_cv_pr_auc": 0.8901,
+        "gb_cv_pr_auc": 0.9099,
+        "hgb_cv_pr_auc": 0.8787
+      },
+      {
+        "regime": "4. FE + Rank MI (k = 10 atribs.)",
+        "regime_short": "FE + Rank\nMI (k=10)",
+        "use_engineered": true,
+        "reduction": "mi_k10",
+        "rf_cv_f1": 0.869,
+        "gb_cv_f1": 0.8787,
+        "hgb_cv_f1": 0.8462,
+        "rf_cv_pr_auc": 0.8872,
+        "gb_cv_pr_auc": 0.8717,
+        "hgb_cv_pr_auc": 0.8754
+      },
+      {
+        "regime": "5. FE + PCA 95% (5 comp.)",
+        "regime_short": "FE + PCA 95%\n(5 comp.)",
+        "use_engineered": true,
+        "reduction": "pca_95",
+        "rf_cv_f1": 0.5839,
+        "gb_cv_f1": 0.5412,
+        "hgb_cv_f1": 0.5735,
+        "rf_cv_pr_auc": 0.6557,
+        "gb_cv_pr_auc": 0.6363,
+        "hgb_cv_pr_auc": 0.6629
+      }
+    ]
+  },
+  "dimensionality_reduction": {
+    "total_encoded_features": 12,
+    "rank_k_selected": 10,
+    "dimensionality_reduction_pct": 16.7,
+    "selected_features_anova_k10": [
+      "Torque_Speed_Ratio",
+      "Torque [Nm]",
+      "Wear_Torque_Nm_min",
+      "Mechanical_Power_W",
+      "Temp_Diff_K",
+      "Tool wear [min]",
+      "Air temperature [K]",
+      "Type_L",
+      "Process temperature [K]",
+      "Rotational speed [rpm]"
+    ],
+    "dropped_features_anova_k10": [
+      "Type_M",
+      "Type_H"
+    ],
+    "selected_features_mi_k10": [
+      "Torque_Speed_Ratio",
+      "Mechanical_Power_W",
+      "Torque [Nm]",
+      "Rotational speed [rpm]",
+      "Wear_Torque_Nm_min",
+      "Tool wear [min]",
+      "Temp_Diff_K",
+      "Air temperature [K]",
+      "Process temperature [K]",
+      "Type_M"
+    ],
+    "feature_ranking": [
+      {
+        "feature": "Torque_Speed_Ratio",
+        "is_engineered": true,
+        "anova_f": 349.716,
+        "anova_p": 2.0495017766183334e-76,
+        "mutual_info": 0.04707,
+        "anova_rank": 1,
+        "selected_anova_k10": true,
+        "mi_rank": 1,
+        "selected_mi_k10": true
+      },
+      {
+        "feature": "Torque [Nm]",
+        "is_engineered": false,
+        "anova_f": 299.653,
+        "anova_p": 6.176304164656385e-66,
+        "mutual_info": 0.04529,
+        "anova_rank": 2,
+        "selected_anova_k10": true,
+        "mi_rank": 3,
+        "selected_mi_k10": true
+      },
+      {
+        "feature": "Wear_Torque_Nm_min",
+        "is_engineered": true,
+        "anova_f": 285.822,
+        "anova_p": 4.986397382114635e-63,
+        "mutual_info": 0.0334,
+        "anova_rank": 3,
+        "selected_anova_k10": true,
+        "mi_rank": 5,
+        "selected_mi_k10": true
+      },
+      {
+        "feature": "Mechanical_Power_W",
+        "is_engineered": true,
+        "anova_f": 255.657,
+        "anova_p": 1.1397153904326731e-56,
+        "mutual_info": 0.04659,
+        "anova_rank": 4,
+        "selected_anova_k10": true,
+        "mi_rank": 2,
+        "selected_mi_k10": true
+      },
+      {
+        "feature": "Temp_Diff_K",
+        "is_engineered": true,
+        "anova_f": 100.344,
+        "anova_p": 1.7609669795102802e-23,
+        "mutual_info": 0.00941,
+        "anova_rank": 5,
+        "selected_anova_k10": true,
+        "mi_rank": 7,
+        "selected_mi_k10": true
+      },
+      {
+        "feature": "Tool wear [min]",
+        "is_engineered": false,
+        "anova_f": 79.51,
+        "anova_p": 5.866848002993837e-19,
+        "mutual_info": 0.01064,
+        "anova_rank": 6,
+        "selected_anova_k10": true,
+        "mi_rank": 6,
+        "selected_mi_k10": true
+      },
+      {
+        "feature": "Air temperature [K]",
+        "is_engineered": false,
+        "anova_f": 59.595,
+        "anova_p": 1.3060040623239258e-14,
+        "mutual_info": 0.0074,
+        "anova_rank": 7,
+        "selected_anova_k10": true,
+        "mi_rank": 8,
+        "selected_mi_k10": true
+      },
+      {
+        "feature": "Type_L",
+        "is_engineered": false,
+        "anova_f": 17.828,
+        "anova_p": 2.4449204712441232e-05,
+        "mutual_info": 0.0,
+        "anova_rank": 8,
+        "selected_anova_k10": true,
+        "mi_rank": 12,
+        "selected_mi_k10": false
+      },
+      {
+        "feature": "Process temperature [K]",
+        "is_engineered": false,
+        "anova_f": 13.368,
+        "anova_p": 0.00025758839208208327,
+        "mutual_info": 0.00393,
+        "anova_rank": 9,
+        "selected_anova_k10": true,
+        "mi_rank": 9,
+        "selected_mi_k10": true
+      },
+      {
+        "feature": "Rotational speed [rpm]",
+        "is_engineered": false,
+        "anova_f": 12.796,
+        "anova_p": 0.00034946129931867707,
+        "mutual_info": 0.03612,
+        "anova_rank": 10,
+        "selected_anova_k10": true,
+        "mi_rank": 4,
+        "selected_mi_k10": true
+      },
+      {
+        "feature": "Type_M",
+        "is_engineered": false,
+        "anova_f": 9.387,
+        "anova_p": 0.0021922110533945634,
+        "mutual_info": 0.00306,
+        "anova_rank": 11,
+        "selected_anova_k10": false,
+        "mi_rank": 10,
+        "selected_mi_k10": true
+      },
+      {
+        "feature": "Type_H",
+        "is_engineered": false,
+        "anova_f": 4.946,
+        "anova_p": 0.026179341007521114,
+        "mutual_info": 0.0,
+        "anova_rank": 12,
+        "selected_anova_k10": false,
+        "mi_rank": 11,
+        "selected_mi_k10": false
+      }
+    ],
+    "pca": {
+      "n_components_95_var": 5,
+      "explained_variance_ratio": [
+        0.413,
+        0.2373,
+        0.1864,
+        0.0773,
+        0.0426,
+        0.0228,
+        0.0137,
+        0.0041,
+        0.0028,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "cumulative_variance_ratio": [
+        0.413,
+        0.6503,
+        0.8366,
+        0.914,
+        0.9566,
+        0.9794,
+        0.9931,
+        0.9972,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ]
+    }
+  },
+  "default_model_comparison": [
+    {
+      "key": "dummy",
+      "model_name": "Dummy (Estratificado)",
+      "short_name": "Dummy",
+      "cv_accuracy": 0.9332,
+      "cv_accuracy_std": 0.0002,
+      "cv_precision": 0.0386,
+      "cv_recall": 0.0405,
+      "cv_f1": 0.0395,
+      "cv_f1_std": 0.007,
+      "cv_roc_auc": 0.5025,
+      "cv_pr_auc": 0.0341,
+      "test_accuracy": 0.932,
+      "test_precision": 0.0278,
+      "test_recall": 0.0294,
+      "test_f1": 0.0286,
+      "test_roc_auc": 0.4966,
+      "test_pr_auc": 0.0338,
+      "confusion_matrix": {
+        "tn": 1862,
+        "fp": 70,
+        "fn": 66,
+        "tp": 2
+      }
+    },
+    {
+      "key": "logreg",
+      "model_name": "Regressão Logística",
+      "short_name": "Reg. Logística",
+      "cv_accuracy": 0.9716,
+      "cv_accuracy_std": 0.0021,
+      "cv_precision": 0.7981,
+      "cv_recall": 0.2362,
+      "cv_f1": 0.3528,
+      "cv_f1_std": 0.0996,
+      "cv_roc_auc": 0.9043,
+      "cv_pr_auc": 0.473,
+      "test_accuracy": 0.9675,
+      "test_precision": 0.5714,
+      "test_recall": 0.1765,
+      "test_f1": 0.2697,
+      "test_roc_auc": 0.9279,
+      "test_pr_auc": 0.4511,
+      "confusion_matrix": {
+        "tn": 1923,
+        "fp": 9,
+        "fn": 56,
+        "tp": 12
+      }
+    },
+    {
+      "key": "mlp",
+      "model_name": "Rede Neural MLP",
+      "short_name": "MLP (64,32)",
+      "cv_accuracy": 0.9768,
+      "cv_accuracy_std": 0.0029,
+      "cv_precision": 0.8268,
+      "cv_recall": 0.3952,
+      "cv_f1": 0.5305,
+      "cv_f1_std": 0.0843,
+      "cv_roc_auc": 0.9533,
+      "cv_pr_auc": 0.6797,
+      "test_accuracy": 0.9795,
+      "test_precision": 0.8462,
+      "test_recall": 0.4853,
+      "test_f1": 0.6168,
+      "test_roc_auc": 0.9662,
+      "test_pr_auc": 0.7021,
+      "confusion_matrix": {
+        "tn": 1926,
+        "fp": 6,
+        "fn": 35,
+        "tp": 33
+      }
+    },
+    {
+      "key": "rf",
+      "model_name": "Random Forest",
+      "short_name": "Random Forest",
+      "cv_accuracy": 0.992,
+      "cv_accuracy_std": 0.0016,
+      "cv_precision": 0.9604,
+      "cv_recall": 0.797,
+      "cv_f1": 0.8703,
+      "cv_f1_std": 0.0295,
+      "cv_roc_auc": 0.973,
+      "cv_pr_auc": 0.8901,
+      "test_accuracy": 0.9925,
+      "test_precision": 0.9649,
+      "test_recall": 0.8088,
+      "test_f1": 0.88,
+      "test_roc_auc": 0.9753,
+      "test_pr_auc": 0.8885,
+      "confusion_matrix": {
+        "tn": 1930,
+        "fp": 2,
+        "fn": 13,
+        "tp": 55
+      }
+    },
+    {
+      "key": "gb",
+      "model_name": "Gradient Boosting",
+      "short_name": "Gradient Boosting",
+      "cv_accuracy": 0.993,
+      "cv_accuracy_std": 0.0014,
+      "cv_precision": 0.9738,
+      "cv_recall": 0.8156,
+      "cv_f1": 0.8874,
+      "cv_f1_std": 0.0227,
+      "cv_roc_auc": 0.9773,
+      "cv_pr_auc": 0.9099,
+      "test_accuracy": 0.9935,
+      "test_precision": 1.0,
+      "test_recall": 0.8088,
+      "test_f1": 0.8943,
+      "test_roc_auc": 0.9716,
+      "test_pr_auc": 0.9041,
+      "confusion_matrix": {
+        "tn": 1932,
+        "fp": 0,
+        "fn": 13,
+        "tp": 55
+      }
+    },
+    {
+      "key": "hgb",
+      "model_name": "HistGradientBoosting",
+      "short_name": "HistGradientBoosting",
+      "cv_accuracy": 0.9912,
+      "cv_accuracy_std": 0.0009,
+      "cv_precision": 0.9393,
+      "cv_recall": 0.7933,
+      "cv_f1": 0.8599,
+      "cv_f1_std": 0.0149,
+      "cv_roc_auc": 0.9761,
+      "cv_pr_auc": 0.8787,
+      "test_accuracy": 0.9925,
+      "test_precision": 0.9492,
+      "test_recall": 0.8235,
+      "test_f1": 0.8819,
+      "test_roc_auc": 0.9843,
+      "test_pr_auc": 0.9012,
+      "confusion_matrix": {
+        "tn": 1929,
+        "fp": 3,
+        "fn": 12,
+        "tp": 56
+      }
+    }
+  ],
+  "optimization": {
+    "selected_base_model": "HistGradientBoosting",
+    "selected_base_key": "hgb",
+    "tuned_model_name": "HistGradientBoostingClassifier (Otimizado)",
+    "grid_search_candidates": 216,
+    "best_hyperparameters": {
+      "class_weight": "balanced",
+      "l2_regularization": 0.0,
+      "learning_rate": 0.1,
+      "max_iter": 350,
+      "max_leaf_nodes": 31,
+      "min_samples_leaf": 10
+    },
+    "default_cv": {
+      "cv_accuracy": 0.9912,
+      "cv_accuracy_std": 0.0009,
+      "cv_precision": 0.9393,
+      "cv_recall": 0.7933,
+      "cv_f1": 0.8599,
+      "cv_f1_std": 0.0149,
+      "cv_roc_auc": 0.9761,
+      "cv_pr_auc": 0.8787
+    },
+    "tuned_cv": {
+      "cv_accuracy": 0.9931,
+      "cv_accuracy_std": 0.0004,
+      "cv_precision": 0.9716,
+      "cv_recall": 0.8227,
+      "cv_f1": 0.8901,
+      "cv_f1_std": 0.0074,
+      "cv_roc_auc": 0.9714,
+      "cv_pr_auc": 0.8896
+    },
+    "default_test": {
+      "test_accuracy": 0.9925,
+      "test_precision": 0.9492,
+      "test_recall": 0.8235,
+      "test_f1": 0.8819,
+      "test_roc_auc": 0.9843,
+      "test_pr_auc": 0.9012,
+      "confusion_matrix": {
+        "tn": 1929,
+        "fp": 3,
+        "fn": 12,
+        "tp": 56
+      }
+    },
+    "tuned_test": {
+      "test_accuracy": 0.994,
+      "test_precision": 0.9828,
+      "test_recall": 0.8382,
+      "test_f1": 0.9048,
+      "test_roc_auc": 0.9716,
+      "test_pr_auc": 0.8866,
+      "confusion_matrix": {
+        "tn": 1931,
+        "fp": 1,
+        "fn": 11,
+        "tp": 57
+      }
+    },
+    "delta_cv_f1": 0.0302,
+    "delta_test_f1": 0.0229
+  }
+}
