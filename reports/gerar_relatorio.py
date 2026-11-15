@@ -9,6 +9,15 @@ Lê exclusivamente os resultados auditados em `reports/metricas_experimento.json
 - Tabelas em estilo IBGE (apenas linhas horizontais superior, cabeçalho e inferior)
 - Margens A4 ABNT (superior/esquerda 3 cm; inferior/direita 2 cm), fonte Times New Roman 12 pt,
   espaçamento 1,5 e recuo de 1,25 cm no corpo textual.
+
+Faculdade de Tecnologia de Pompeia "Shunji Nishimura" (Fatec Pompeia)
+Curso: Tecnologia em Ciência de Dados
+Disciplina: Aplicação de Ciência de Dados — Prof. Dr. João Ricardo Favan
+
+Integrantes:
+    - Hadryan Fortinis de Oliveira Lima
+    - Raul Victor Matsunaga de Carvalho
+    - Washingtom Ferreira Gonçalves
 """
 
 from __future__ import annotations
@@ -363,7 +372,7 @@ def get_narrative_sections(m: dict[str, Any]) -> dict[str, Any]:
         f"elevou o F1-score no conjunto de teste de {fmt_br(opt['default_test']['test_f1'])} para "
         f"{fmt_br(opt['tuned_test']['test_f1'])} (Precisão = {fmt_br(opt['tuned_test']['test_precision'])} e "
         f"Revocação = {fmt_br(opt['tuned_test']['test_recall'])}). Por fim, o pipeline completo foi serializado e "
-        f"publicado em produção via API REST FastAPI, painel web operacional e contêiner Docker validado por testes automatizados."
+        f"publicado em produção via API REST FastAPI com página web integrada, empacotada em contêiner Docker."
     )
 
     keywords = "Manutenção preditiva. Engenharia de atributos. Redução de dimensionalidade. HistGradientBoosting. API REST."
@@ -383,7 +392,7 @@ def get_narrative_sections(m: dict[str, Any]) -> dict[str, Any]:
         "Projetar e validar empiricamente quatro novos atributos físicos derivados (superior ao mínimo de dois atributos exigido) mediante estudo de ablação;",
         "Comparar técnicas de redução de dimensionalidade — Rank (ANOVA F e Informação Mútua) versus Análise de Componentes Principais (PCA) — quanto ao impacto preditivo;",
         "Ajustar e confrontar seis algoritmos de classificação distintos (acima do mínimo de dois), selecionando e otimizando o modelo mais adequado frente à sua configuração padrão;",
-        "Exportar o pipeline completo para produção por meio de uma API REST (FastAPI) integrada a interface web interativa e empacotamento Docker, com cobertura de testes automatizados.",
+        "Exportar o pipeline completo para produção por meio de uma API REST (FastAPI) com interface web interativa, executada em contêiner Docker.",
     ]
 
     return {
@@ -551,8 +560,8 @@ def _build_pdf_story(
             [
                 Paragraph(
                     "Considerando os mecanismos físicos que governam falhas térmicas, de potência e de sobrecarga descritos por "
-                    "Matzka (2020), implementou-se o transformador customizado PredictiveMaintenanceFeatureEngineer, responsável "
-                    "por calcular quatro novos atributos determinísticos sem qualquer dependência do conjunto de avaliação:",
+                    "Matzka (2020), implementou-se a função criar_atributos, responsável por calcular, linha a linha, "
+                    "quatro novos atributos determinísticos sem qualquer dependência do conjunto de avaliação:",
                     styles["body"],
                 )
             ],
@@ -624,11 +633,12 @@ def _build_pdf_story(
             page_tracker,
             [
                 Paragraph(
-                    "O pipeline vencedor completo (engenharia física, pré-processamento, Rank ANOVA k = 10 e classificador otimizado) "
-                    "foi exportado em disco via joblib (modelo_manutencao_otimizado.joblib) acompanhado de metadados auditáveis. "
-                    "Disponibilizou-se o modelo por meio de uma API REST em FastAPI com validação Pydantic (/health, /model-info, "
-                    "/predict e /predict/batch), interface web interativa servida na raiz (/), imagem Docker reproduzível "
-                    "(python:3.13-slim) e suíte automatizada de testes em pytest.",
+                    "Todo o experimento foi conduzido em um notebook Jupyter (treinamento_modelo.ipynb). O pipeline vencedor "
+                    "(pré-processamento, Rank ANOVA k = 10 e classificador otimizado) foi exportado via joblib "
+                    "(modelo_manutencao_otimizado.joblib) acompanhado de metadados em JSON. A disponibilização ocorre em um único "
+                    "arquivo-fonte (app.py), que implementa uma API REST em FastAPI com validação Pydantic (/predict, /model-info e "
+                    "/health) e uma página web interativa servida na raiz (/), executada em imagem Docker (python:3.13-slim), "
+                    "dispensando a configuração manual de ambiente virtual.",
                     styles["body"],
                 )
             ],
@@ -904,14 +914,13 @@ def _build_pdf_story(
             page_tracker,
             [
                 Paragraph(
-                    "Para efetivar a entrega em produção, o pipeline completo (capaz de receber os seis campos brutos da máquina, "
-                    "calcular automaticamente os quatro atributos físicos, selecionar as 10 dimensões do Rank e emitir a probabilidade "
-                    "de falha) foi embarcado em serviço FastAPI (app/main.py). A plataforma disponibiliza painel operacional web "
-                    "interativo na rota /, endpoints REST /predict (unitário), /predict/batch (até 500 leituras), /model-info e "
-                    "/health, além de alertas diagnósticos físicos legíveis ao operador de fábrica e container Dockerfile reproduzível. "
-                    "Todos os testes automatizados (pytest: integridade das equações físicas, inferência roundtrip do arquivo .joblib, "
-                    "respostas de risco nominal vs. crítico na API e rejeição HTTP 422 para entradas fisicamente inválidas) foram "
-                    "executados com 100% de aprovação (3 passed).",
+                    "Para efetivar a entrega em produção, o modelo otimizado foi embarcado em serviço FastAPI contido no arquivo app.py, "
+                    "que recebe os seis campos brutos da máquina, calcula automaticamente os quatro atributos físicos, aplica o "
+                    "pipeline (Rank com 10 dimensões e classificador) e emite a probabilidade de falha. A aplicação disponibiliza página web "
+                    "interativa na rota /, o endpoint REST /predict, além de /model-info e /health, e retorna alertas diagnósticos "
+                    "físicos legíveis ao operador de fábrica. O serviço é executado com dois comandos (docker build e docker run), "
+                    "e sua validação manual confirmou respostas coerentes para leituras nominais e críticas e a rejeição (HTTP 422) "
+                    "de entradas fisicamente inválidas.",
                     styles["body"],
                 )
             ],
@@ -1201,7 +1210,7 @@ def generate_docx(data: dict[str, Any], toc_pages: dict[str, int] | None = None)
 
     add_p("3.2 Engenharia de atributos físicos", bold=True, align=WD_ALIGN_PARAGRAPH.LEFT, spacing=1.15, after_pt=4)
     add_p(
-        "Implementou-se PredictiveMaintenanceFeatureEngineer gerando quatro novos descritores físicos: "
+        "Implementou-se a função criar_atributos gerando quatro novos descritores físicos: "
         "Temp_Diff_K (ΔT = T_processo − T_ar [K]), Mechanical_Power_W (Torque × RPM × 2π/60), "
         "Wear_Torque_Nm_min (Tool wear × Torque) e Torque_Speed_Ratio (Torque / RPM).",
         indent_cm=1.25,
@@ -1226,7 +1235,7 @@ def generate_docx(data: dict[str, Any], toc_pages: dict[str, int] | None = None)
     add_p("3.5 Arquitetura de exportação para produção", bold=True, align=WD_ALIGN_PARAGRAPH.LEFT, spacing=1.15, after_pt=4)
     add_p(
         "O pipeline completo foi serializado com joblib (modelo_manutencao_otimizado.joblib) e publicado via API REST "
-        "FastAPI (/health, /model-info, /predict, /predict/batch), interface web integrada em / e contêiner Dockerfile.",
+        "FastAPI (/predict, /model-info, /health) em arquivo único (app.py), com página web em / e contêiner Docker.",
         indent_cm=1.25,
     )
 
@@ -1328,8 +1337,8 @@ def generate_docx(data: dict[str, Any], toc_pages: dict[str, int] | None = None)
 
     add_p("4.4 Operacionalização em API REST, interface web e Docker", bold=True, align=WD_ALIGN_PARAGRAPH.LEFT, spacing=1.15, after_pt=4)
     add_p(
-        "O serviço FastAPI + painel web integrado em app/main.py e app/static/index.html opera com validação Pydantic e "
-        "cálculo automático dos atributos físicos, aprovado integralmente nos testes pytest (3/3).",
+        "O serviço FastAPI com página web integrada, em arquivo único (app.py) executado via Docker, opera com validação "
+        "Pydantic e cálculo automático dos atributos físicos.",
         indent_cm=1.25,
     )
 
@@ -1372,3 +1381,12 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
+
+# =============================================================================
+#  Trabalho desenvolvido por:
+#    Hadryan Fortinis de Oliveira Lima
+#    Raul Victor Matsunaga de Carvalho
+#    Washingtom Ferreira Gonçalves
+#  Fatec Pompeia "Shunji Nishimura" · Aplicação de Ciência de Dados · 2026
+# =============================================================================

@@ -1,6 +1,7 @@
+# Dependências da API (instaladas automaticamente pelo Dockerfile).
+# A versão do scikit-learn deve ser a mesma usada no notebook para treinar o modelo.
 fastapi==0.162.7
 uvicorn[standard]==0.54.0
-pydantic==2.14.3
 joblib==1.6.0
 numpy==2.5.4
 pandas==3.1.1

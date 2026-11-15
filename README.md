@@ -1,74 +1,52 @@
 # Manutenção Preditiva Industrial — AI4I 2020
 
-Projeto completo da disciplina **Aplicação de Ciência de Dados** (Fatec Pompeia Shunji Nishimura — 2026), cobrindo desde a preparação de dados industriais e engenharia de atributos físicos até redução de dimensionalidade, comparação e otimização de modelos, publicação via API REST + interface web conteinerizada e relatório técnico em conformidade com as normas da ABNT.
+Trabalho da disciplina **Aplicação de Ciência de Dados** (Fatec Pompeia Shunji Nishimura — 2026).
+Prof. Dr. João Ricardo Favan.
 
-## Integrantes do Grupo
+**Integrantes:** Hadryan Fortinis de Oliveira Lima, Raul Victor Matsunaga de Carvalho e Washingtom Ferreira Gonçalves.
 
-- Hadryan Fortinis de Oliveira Lima
-- Raul Victor Matsunaga de Carvalho
-- Washingtom Ferreira Gonçalves
+## Arquivos de entrega
 
-**Docente:** Prof. Dr. João Ricardo Favan
+| Arquivo | O que é |
+|---|---|
+| `treinamento_modelo.ipynb` | Notebook com todo o experimento: análise, pré-processamento, engenharia de atributos, Rank × PCA, comparação de modelos, otimização e exportação do modelo |
+| `app.py` | Código-fonte da aplicação (API FastAPI + página web) em um único arquivo |
+| `Relatorio_Manutencao_Preditiva_ABNT.pdf` | Relatório no padrão ABNT |
 
----
+Arquivos de apoio: `data/ai4i2020.csv` (dataset), `models/` (modelo treinado gerado pelo notebook),
+`Dockerfile` e `requirements.txt` (ambiente da API), `reports/` (figuras e gerador do relatório).
 
-## Estrutura do Projeto
+## 1. Treinar o modelo (notebook)
 
-```
-Tarefa_Ciencia_de _Dados/
-├── app/
-│   ├── __init__.py
-│   ├── main.py                     # API REST FastAPI (/predict, /predict/batch, /model-info, /health)
-│   └── static/
-│       └── index.html              # Painel web industrial integrado à API
-├── data/
-│   └── ai4i2020.csv                # Dataset AI4I 2020 Predictive Maintenance (10.000 amostras)
-├── models/
-│   ├── modelo_manutencao_otimizado.joblib
-│   └── model_metadata.json
-├── notebooks/
-│   └── experimento_manutencao_preditiva.ipynb
-├── reports/
-│   ├── figures/                    # Gráficos 300 DPI usados no relatório
-│   ├── gerar_relatorio.py          # Gerador automático ABNT (.docx e .pdf)
-│   ├── metricas_experimento.json
-│   └── Relatorio_Manutencao_Preditiva_ABNT.docx
-├── src/
-│   ├── __init__.py
-│   ├── features.py                 # Transformador sklearn com 4 atributos físicos derivados
-│   └── train_pipeline.py           # Experimento reproduzível (EDA, ablação, Rank/PCA, tuning, export)
-├── tests/
-│   └── test_pipeline_and_api.py
-├── Dockerfile
-├── README.md
-├── Relatorio_Manutencao_Preditiva_ABNT.pdf
-└── requirements.txt
-```
+Abra `treinamento_modelo.ipynb` no Jupyter / VS Code e execute todas as células.
+No final ele salva `models/modelo_manutencao_otimizado.joblib` e `models/model_metadata.json`.
 
----
+> O modelo já treinado está incluído em `models/`, então este passo é opcional para rodar a API.
+> Se treinar de novo, use a mesma versão do scikit-learn do `requirements.txt` (1.9.1).
 
-## Execução Local
+## 2. Rodar a aplicação (Docker)
 
-### 1. Treinar o pipeline e gerar artefatos/figuras
+Não precisa criar ambiente virtual: tudo roda dentro do contêiner.
+
 ```bash
-.venv/bin/python -m src.train_pipeline
+docker build -t manutencao-preditiva .
+docker run -p 8000:8000 manutencao-preditiva
 ```
 
-### 2. Executar testes automatizados
+Acesse:
+- Página web: http://localhost:8000
+- Documentação da API (Swagger): http://localhost:8000/docs
+
+Exemplo de chamada direta:
+
 ```bash
-.venv/bin/pytest -v
+curl -X POST http://localhost:8000/predict -H "Content-Type: application/json" \
+  -d '{"type":"L","air_temperature_k":300.8,"process_temperature_k":309.4,"rotational_speed_rpm":1342,"torque_nm":62.4,"tool_wear_min":113}'
 ```
 
-### 3. Iniciar a API e Interface Web em Produção Local
-```bash
-.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000
-```
-Acesse no navegador:
-- Painel operacional integrado: `http://127.0.0.1:8000/`
-- Documentação interativa Swagger/OpenAPI: `http://127.0.0.1:8000/docs`
+## Resultados principais
 
-### 4. Execução via Docker
-```bash
-docker build -t manutencao-preditiva-ai4i .
-docker run -p 8000:8000 manutencao-preditiva-ai4i
-```
+| Modelo | F1 (teste) | Precisão | Recall |
+|---|---|---|---|
+| HistGradientBoosting padrão | 0,8819 | 0,9492 | 0,8235 |
+| HistGradientBoosting otimizado (GridSearchCV, 216 combinações) | **0,9048** | **0,9828** | **0,8382** |

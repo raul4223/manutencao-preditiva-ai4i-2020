@@ -1,0 +1,7 @@
+.venv/
+.git/
+data/
+reports/
+*.ipynb
+*.pdf
+__pycache__/
