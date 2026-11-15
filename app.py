@@ -1,7 +1,7 @@
 """API de Manutenção Preditiva Industrial (AI4I 2020).
 
 Faculdade de Tecnologia de Pompeia "Shunji Nishimura" (Fatec Pompeia)
-Curso: Tecnologia em Ciência de Dados
+Curso: Tecnologia em Sistemas Inteligentes
 Disciplina: Aplicação de Ciência de Dados — Prof. Dr. João Ricardo Favan
 
 Integrantes:

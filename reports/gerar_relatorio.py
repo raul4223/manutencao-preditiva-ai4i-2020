@@ -11,7 +11,7 @@ Lê exclusivamente os resultados auditados em `reports/metricas_experimento.json
   espaçamento 1,5 e recuo de 1,25 cm no corpo textual.
 
 Faculdade de Tecnologia de Pompeia "Shunji Nishimura" (Fatec Pompeia)
-Curso: Tecnologia em Ciência de Dados
+Curso: Tecnologia em Sistemas Inteligentes
 Disciplina: Aplicação de Ciência de Dados — Prof. Dr. João Ricardo Favan
 
 Integrantes:
@@ -66,7 +66,7 @@ DOCX_OUT = REPORTS_DIR / "Relatorio_Manutencao_Preditiva_ABNT.docx"
 
 INSTITUTION = 'FACULDADE DE TECNOLOGIA DE POMPEIA "SHUNJI NISHIMURA"'
 INSTITUTION_TITLE = 'Faculdade de Tecnologia de Pompeia "Shunji Nishimura" (Fatec Pompeia)'
-COURSE = "TECNOLOGIA EM CIÊNCIA DE DADOS"
+COURSE = "TECNOLOGIA EM SISTEMAS INTELIGENTES"
 DISCIPLINE = "Aplicação de Ciência de Dados"
 PROFESSOR = "Prof. Dr. João Ricardo Favan"
 AUTHORS = [
@@ -454,7 +454,7 @@ def _build_pdf_story(
     story.append(
         Paragraph(
             f"Relatório técnico-científico apresentado à disciplina de {DISCIPLINE}, do Curso Superior "
-            f"de Tecnologia em Ciência de Dados da {INSTITUTION_TITLE}, sob orientação do {PROFESSOR}, "
+            f"de Tecnologia em Sistemas Inteligentes da {INSTITUTION_TITLE}, sob orientação do {PROFESSOR}, "
             f"como requisito parcial de avaliação.",
             styles["folha_nota"],
         )
@@ -1118,7 +1118,7 @@ def generate_docx(data: dict[str, Any], toc_pages: dict[str, int] | None = None)
     add_p(TITLE, bold=True, size=13, align=WD_ALIGN_PARAGRAPH.CENTER, spacing=1.3, after_pt=42)
     add_p(
         f"Relatório técnico-científico apresentado à disciplina de {DISCIPLINE}, do Curso Superior de Tecnologia em "
-        f"Ciência de Dados da {INSTITUTION_TITLE}, sob orientação do {PROFESSOR}, como requisito parcial de avaliação.",
+        f"Sistemas Inteligentes da {INSTITUTION_TITLE}, sob orientação do {PROFESSOR}, como requisito parcial de avaliação.",
         size=10,
         align=WD_ALIGN_PARAGRAPH.JUSTIFY,
         left_cm=7.2,
